@@ -1,6 +1,6 @@
 name: dart_zx
 description: Bash is great, but when it comes to writing more complex scripts, many people prefer a more convenient programming language. Dart is a perfect choice, but the DartIO standard library requires additional hassle before using. The zx package provides useful wrappers around child_process, escapes arguments and gives sensible defaults.
-version: 1.0.0
+version: 1.0.1
 
 environment:
   sdk: ^3.4.3
