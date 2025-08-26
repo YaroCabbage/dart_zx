@@ -89,8 +89,10 @@ class Base {
     }
     final zxProcess = ZxProcess(process: process);
 
+    /// Automatically starting subprocess
     if (bash && startScript != null) {
-      zxProcess.run(startScript);
+      final subProcess = zxProcess.run(startScript);
+      subProcess.wait.whenComplete(() => zxProcess.kill());
     }
 
     if (verbose ?? this.verbose) {
@@ -125,6 +127,7 @@ extension S on ProcessResult {}
 class ZxProcess implements Process {
   final Process process;
   final Que que;
+  final Map<String, ZxSubProcess> subProcesses = {};
 
   ZxProcess({required this.process}) : que = Que(Base.uuid) {
     _processStdout = process.stdout.asBroadcastStream();
@@ -189,9 +192,10 @@ class ZxProcess implements Process {
       environment.forEach((key, value) {
         stdin.writeln('unset $key');
       });
+      subProcesses.remove(commandId);
     });
 
-    return ZxSubProcess(
+    return subProcesses[commandId] ??= ZxSubProcess(
       id: commandId,
       stdout: subStdout,
       stderr: subStderr,
